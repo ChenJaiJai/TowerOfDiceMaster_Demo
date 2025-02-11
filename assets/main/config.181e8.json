@@ -1,0 +1,70 @@
+{
+    "importBase": "import",
+    "nativeBase": "native",
+    "name": "main",
+    "deps": [],
+    "uuids": [
+        "0fb807422",
+        "3b601ff6-707c-44c2-bd49-b08750c2f813",
+        "a2e66f3e-96a3-4715-9380-b94dda251511",
+        "a2e66f3e-96a3-4715-9380-b94dda251511@6c48a",
+        "a2e66f3e-96a3-4715-9380-b94dda251511@f9941",
+        "ba21476f-2866-4f81-9c4d-6e359316e448",
+        "c9e59e0a-5252-4792-b7c0-521a06d20b09",
+        "c9e59e0a-5252-4792-b7c0-521a06d20b09@6c48a",
+        "c9e59e0a-5252-4792-b7c0-521a06d20b09@f9941",
+        "dca21eae-136a-4e1c-89c0-0853ee7ab412",
+        "fd8ec536-a354-4a17-9c74-4f3883c378c8"
+    ],
+    "paths": {
+        "dca21eae-136a-4e1c-89c0-0853ee7ab412": [
+            "db:/assets/Scene/Game",
+            "cc.SceneAsset",
+            1
+        ],
+        "fd8ec536-a354-4a17-9c74-4f3883c378c8": [
+            "db:/internal/default_renderpipeline/builtin-forward",
+            "cc.RenderPipeline",
+            1
+        ],
+        "ba21476f-2866-4f81-9c4d-6e359316e448": [
+            "db:/internal/physics/default-physics-material",
+            "cc.PhysicsMaterial",
+            1
+        ]
+    },
+    "scenes": {
+        "db://assets/Scene/Game.scene": "dca21eae-136a-4e1c-89c0-0853ee7ab412"
+    },
+    "packs": {
+        "0fb807422": [
+            "3b601ff6-707c-44c2-bd49-b08750c2f813",
+            "a2e66f3e-96a3-4715-9380-b94dda251511",
+            "a2e66f3e-96a3-4715-9380-b94dda251511@6c48a",
+            "a2e66f3e-96a3-4715-9380-b94dda251511@f9941",
+            "ba21476f-2866-4f81-9c4d-6e359316e448",
+            "c9e59e0a-5252-4792-b7c0-521a06d20b09",
+            "c9e59e0a-5252-4792-b7c0-521a06d20b09@6c48a",
+            "c9e59e0a-5252-4792-b7c0-521a06d20b09@f9941",
+            "dca21eae-136a-4e1c-89c0-0853ee7ab412",
+            "fd8ec536-a354-4a17-9c74-4f3883c378c8"
+        ]
+    },
+    "versions": {
+        "import": [
+            "0fb807422",
+            "be245"
+        ],
+        "native": [
+            "a2e66f3e-96a3-4715-9380-b94dda251511",
+            "6def7",
+            "c9e59e0a-5252-4792-b7c0-521a06d20b09",
+            "4416c"
+        ]
+    },
+    "redirect": [],
+    "debug": true,
+    "extensionMap": {},
+    "hasPreloadScript": true,
+    "dependencyRelationships": {}
+}

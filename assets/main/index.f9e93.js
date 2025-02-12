@@ -10692,6 +10692,7 @@ System.register("chunks:///_virtual/M10PanelBetSelect.ts", ['./rollupPluginModLo
             if (key == Select.Play) continue;
             value.node.active = bool;
             value.interactable = isInteractable;
+            value.isSelect = false;
           }
         };
         _proto.showWinEnd = function showWinEnd() {
@@ -10703,7 +10704,7 @@ System.register("chunks:///_virtual/M10PanelBetSelect.ts", ['./rollupPluginModLo
           if (!Plug.Model.checkHasEnum(M10Select, customEventData) && !Plug.Model.checkHasEnum(Select, customEventData)) throw new Error("node\u7269\u4EF6\u547D\u540D\u6709\u554F\u984C\uFF0CEvnetData\uFF1A" + customEventData);
           this.resetSelectBtnSet(true, false);
           var btn = this.getCompo(customEventData);
-          btn.interactable = true;
+          // btn.interactable = true
           this.changeBtnStatus(btn, true);
           //TODO 傳遞給後端
           var selectData = new SendSelect();

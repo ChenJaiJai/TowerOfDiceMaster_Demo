@@ -2633,6 +2633,7 @@ System.register("chunks:///_virtual/BasicAutoPlay.ts", ['./rollupPluginModLoBabe
           _this.roundDate = ["10", "20", "30", "50", "♾️"];
           _this.selectIndex = void 0;
           _this.selectBet = void 0;
+          _this.mapAllBtn = new Map();
           return _this;
         }
         var _proto = BasicAutoPlay.prototype;
@@ -2658,6 +2659,26 @@ System.register("chunks:///_virtual/BasicAutoPlay.ts", ['./rollupPluginModLoBabe
           this.eventEmit(BasicEnum.StartAutoPlay, null, this.selectBet);
           this.hide();
         };
+        _proto.onSelectBet = function onSelectBet(e, customEventData) {
+          //把上一個狀態取消
+          if (!Plug.Model.checkStringNull(this.selectBet)) this.changeBtnStatus(this.getCompo(this.selectBet), false);
+          this.changeBtnStatus(this.getCompo(customEventData), true);
+          this.selectBet = customEventData;
+        };
+        _proto.getCompo = function getCompo(type) {
+          if (!this.mapAllBtn.has(type)) throw new Error("\u7DE8\u8F2F\u5668node\u6A94\u6848\u547D\u540D\u6709\u554F\u984C\uFF0Ctype\u7269\u4EF6\u540D\u7A31\uFF1A" + type + "\uFF0C\u6B63\u78BA\u6027\u8ACB\u4F9D\u7167Select\u5B57\u4E32\u547D\u540D");
+          return this.mapAllBtn.get(type);
+        };
+        _proto.changeBtnStatus = function changeBtnStatus(btn, isSelect) {
+          btn.isSelect = isSelect;
+          btn.updateSpriteStatus();
+        };
+        _proto.setBtnMap = function setBtnMap(enumType, btn, func) {
+          var customEventData = btn.node.name.replace("btn", "");
+          if (!Plug.Model.checkHasEnum(enumType, customEventData)) throw new Error("\u7DE8\u8F2F\u5668node\u6A94\u6848\u547D\u540D\u6709\u554F\u984C\uFF0Ctype\u7269\u4EF6\u540D\u7A31\uFF1A" + customEventData + "\uFF0C\u6B63\u78BA\u6027\u8ACB\u4F9D\u7167Select\u5B57\u4E32\u547D\u540D");
+          CustomEvent.addEvent(CEType.ClickEvents, this, Plug.Model.getFunctionName(func), btn, customEventData);
+          this.mapAllBtn.set(customEventData, btn);
+        };
         return BasicAutoPlay;
       }(BaseComponent), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, "items", [_dec2], {
         configurable: true,
@@ -2666,14 +2687,14 @@ System.register("chunks:///_virtual/BasicAutoPlay.ts", ['./rollupPluginModLoBabe
         initializer: function initializer() {
           return [];
         }
-      }), _applyDecoratedDescriptor(_class2.prototype, "onSelectIndex", [setFunctionName], Object.getOwnPropertyDescriptor(_class2.prototype, "onSelectIndex"), _class2.prototype)), _class2)) || _class));
+      }), _applyDecoratedDescriptor(_class2.prototype, "onSelectIndex", [setFunctionName], Object.getOwnPropertyDescriptor(_class2.prototype, "onSelectIndex"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "onSelectBet", [setFunctionName], Object.getOwnPropertyDescriptor(_class2.prototype, "onSelectBet"), _class2.prototype)), _class2)) || _class));
       cclegacy._RF.pop();
     }
   };
 });
 
-System.register("chunks:///_virtual/BasicBetInfo.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './BaseComponent.ts', './Public.ts', './BasicEnum.ts', './CommonValue.ts', './SpriteButton.ts', './CustomEvent.ts'], function (exports) {
-  var _applyDecoratedDescriptor, _inheritsLoose, _initializerDefineProperty, _assertThisInitialized, cclegacy, _decorator, Button, Sprite, Label, Tween, Vec3, tween, v3, BaseComponent, setFunctionName, Plug, BasicEnum, BasicTweenTag, CommonValue, SpriteButton, CustomEvent, CEType;
+System.register("chunks:///_virtual/BasicBetInfo.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './BaseComponent.ts', './Public.ts', './BasicEnum.ts', './CommonValue.ts', './CustomEvent.ts', './SpriteButton.ts'], function (exports) {
+  var _applyDecoratedDescriptor, _inheritsLoose, _initializerDefineProperty, _assertThisInitialized, cclegacy, _decorator, Button, Sprite, Label, Tween, Vec3, tween, v3, BaseComponent, setFunctionName, Plug, BasicEnum, BasicTweenTag, CommonValue, CustomEvent, CEType, SpriteButton;
   return {
     setters: [function (module) {
       _applyDecoratedDescriptor = module.applyDecoratedDescriptor;
@@ -2701,10 +2722,10 @@ System.register("chunks:///_virtual/BasicBetInfo.ts", ['./rollupPluginModLoBabel
     }, function (module) {
       CommonValue = module.default;
     }, function (module) {
-      SpriteButton = module.default;
-    }, function (module) {
       CustomEvent = module.default;
       CEType = module.CEType;
+    }, function (module) {
+      SpriteButton = module.default;
     }],
     execute: function () {
       var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9;
@@ -2829,6 +2850,8 @@ System.register("chunks:///_virtual/BasicBetInfo.ts", ['./rollupPluginModLoBabel
             })).start();
           }
           this.btnTurbo.isSelect = CommonValue.isTurbo;
+          this.btnTurbo.updateSpriteStatus();
+          this.btnTurbo.activeTouchMove(!CommonValue.isTurbo);
         };
         _proto.onOpenAutoPlay = function onOpenAutoPlay(e, customEventData) {
           this.eventEmit(BasicEnum.OpenAutoPlay, true);
@@ -3228,6 +3251,44 @@ System.register("chunks:///_virtual/BasicGameShow.ts", ['./rollupPluginModLoBabe
   };
 });
 
+System.register("chunks:///_virtual/BasicPlayAutoPlay.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './BasicAutoPlay.ts'], function (exports) {
+  var _inheritsLoose, cclegacy, _decorator, BasicAutoPlay;
+  return {
+    setters: [function (module) {
+      _inheritsLoose = module.inheritsLoose;
+    }, function (module) {
+      cclegacy = module.cclegacy;
+      _decorator = module._decorator;
+    }, function (module) {
+      BasicAutoPlay = module.default;
+    }],
+    execute: function () {
+      var _dec, _class;
+      cclegacy._RF.push({}, "ad571r3pmNHAoNrHmdWBRWq", "BasicPlayAutoPlay", undefined);
+      var ccclass = _decorator.ccclass,
+        property = _decorator.property;
+      var BasicPlayAutoPlay = exports('default', (_dec = ccclass('BasicPlayAutoPlay'), _dec(_class = /*#__PURE__*/function (_BasicAutoPlay) {
+        _inheritsLoose(BasicPlayAutoPlay, _BasicAutoPlay);
+        function BasicPlayAutoPlay() {
+          return _BasicAutoPlay.apply(this, arguments) || this;
+        }
+        var _proto = BasicPlayAutoPlay.prototype;
+        _proto.start = function start() {
+          //初始化時會優先量Play
+          this.selectBet = Select.Play;
+          _BasicAutoPlay.prototype.start.call(this);
+        };
+        return BasicPlayAutoPlay;
+      }(BasicAutoPlay)) || _class));
+      var Select = exports('Select', /*#__PURE__*/function (Select) {
+        Select["Play"] = "Play";
+        return Select;
+      }({}));
+      cclegacy._RF.pop();
+    }
+  };
+});
+
 System.register("chunks:///_virtual/BasicPlaySelect.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './SpriteButton.ts', './BasicSelect.ts', './CommonValue.ts'], function (exports) {
   var _applyDecoratedDescriptor, _inheritsLoose, _initializerDefineProperty, _assertThisInitialized, cclegacy, _decorator, SpriteButton, BasicSelect, BasicSendDate, CommonValue;
   return {
@@ -3316,8 +3377,8 @@ System.register("chunks:///_virtual/BasicPlaySelect.ts", ['./rollupPluginModLoBa
   };
 });
 
-System.register("chunks:///_virtual/BasicRandomAutoPlay.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './Public.ts', './CustomEvent.ts', './SpriteButton.ts', './BasicAutoPlay.ts'], function (exports) {
-  var _applyDecoratedDescriptor, _inheritsLoose, _initializerDefineProperty, _assertThisInitialized, cclegacy, _decorator, setFunctionName, Plug, CustomEvent, CEType, SpriteButton, BasicAutoPlay;
+System.register("chunks:///_virtual/BasicRandomAutoPlay.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './SpriteButton.ts', './BasicAutoPlay.ts'], function (exports) {
+  var _applyDecoratedDescriptor, _inheritsLoose, _initializerDefineProperty, _assertThisInitialized, cclegacy, _decorator, SpriteButton, BasicAutoPlay;
   return {
     setters: [function (module) {
       _applyDecoratedDescriptor = module.applyDecoratedDescriptor;
@@ -3327,12 +3388,6 @@ System.register("chunks:///_virtual/BasicRandomAutoPlay.ts", ['./rollupPluginMod
     }, function (module) {
       cclegacy = module.cclegacy;
       _decorator = module._decorator;
-    }, function (module) {
-      setFunctionName = module.setFunctionName;
-      Plug = module.Plug;
-    }, function (module) {
-      CustomEvent = module.default;
-      CEType = module.CEType;
     }, function (module) {
       SpriteButton = module.default;
     }, function (module) {
@@ -3355,8 +3410,6 @@ System.register("chunks:///_virtual/BasicRandomAutoPlay.ts", ['./rollupPluginMod
           }
           _this = _BasicAutoPlay.call.apply(_BasicAutoPlay, [this].concat(args)) || this;
           _initializerDefineProperty(_this, "btnRandom", _descriptor, _assertThisInitialized(_this));
-          _this.mapAllBtn = new Map();
-          _this.gameSelectEnum = void 0;
           return _this;
         }
         var _proto = BasicRandomAutoPlay.prototype;
@@ -3373,33 +3426,13 @@ System.register("chunks:///_virtual/BasicRandomAutoPlay.ts", ['./rollupPluginMod
           this.changeBtnStatus(this.getCompo(this.selectBet), true);
           _BasicAutoPlay.prototype.start.call(this);
         };
-        _proto.onSelectBet = function onSelectBet(e, customEventData) {
-          //把上一個狀態取消
-          if (!Plug.Model.checkStringNull(this.selectBet)) this.changeBtnStatus(this.getCompo(this.selectBet), false);
-          this.changeBtnStatus(this.getCompo(customEventData), true);
-          this.selectBet = customEventData;
-        };
-        _proto.getCompo = function getCompo(type) {
-          if (!this.mapAllBtn.has(type)) throw new Error("\u7DE8\u8F2F\u5668node\u6A94\u6848\u547D\u540D\u6709\u554F\u984C\uFF0Ctype\u7269\u4EF6\u540D\u7A31\uFF1A" + type + "\uFF0C\u6B63\u78BA\u6027\u8ACB\u4F9D\u7167Select\u5B57\u4E32\u547D\u540D");
-          return this.mapAllBtn.get(type);
-        };
-        _proto.changeBtnStatus = function changeBtnStatus(btn, isSelect) {
-          btn.isSelect = isSelect;
-          btn.updateSpriteStatus();
-        };
-        _proto.setBtnMap = function setBtnMap(enumType, btn, func) {
-          var customEventData = btn.node.name.replace("btn", "");
-          if (!Plug.Model.checkHasEnum(enumType, customEventData)) throw new Error("\u7DE8\u8F2F\u5668node\u6A94\u6848\u547D\u540D\u6709\u554F\u984C\uFF0Ctype\u7269\u4EF6\u540D\u7A31\uFF1A" + customEventData + "\uFF0C\u6B63\u78BA\u6027\u8ACB\u4F9D\u7167Select\u5B57\u4E32\u547D\u540D");
-          CustomEvent.addEvent(CEType.ClickEvents, this, Plug.Model.getFunctionName(func), btn, customEventData);
-          this.mapAllBtn.set(customEventData, btn);
-        };
         return BasicRandomAutoPlay;
-      }(BasicAutoPlay), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, "btnRandom", [_dec2], {
+      }(BasicAutoPlay), _descriptor = _applyDecoratedDescriptor(_class2.prototype, "btnRandom", [_dec2], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: null
-      }), _applyDecoratedDescriptor(_class2.prototype, "onSelectBet", [setFunctionName], Object.getOwnPropertyDescriptor(_class2.prototype, "onSelectBet"), _class2.prototype)), _class2)) || _class));
+      }), _class2)) || _class));
       var Select = exports('Select', /*#__PURE__*/function (Select) {
         Select["Random"] = "Random";
         return Select;
@@ -3436,7 +3469,7 @@ System.register("chunks:///_virtual/BasicRandomSelect.ts", ['./rollupPluginModLo
       var ccclass = _decorator.ccclass,
         property = _decorator.property;
       /**
-       * 適用於有Random按鈕模式，除了Random外的按鈕需要自行擴展，可參考M4 MiniGame
+       * 適用於有Random按鈕模式，除了Random外的按鈕需要自行擴展，可參考M9 MiniGame
        */
       var BasicRandomSelect = exports('default', (_dec = ccclass('BasicRandomSelect'), _dec2 = property({
         type: SpriteButton,
@@ -3464,6 +3497,7 @@ System.register("chunks:///_virtual/BasicRandomSelect.ts", ['./rollupPluginModLo
          */
         _proto.onLoad = function onLoad() {
           this.setBtnMap(Select, this.btnRandom, this.onSelect);
+          if (!this.gameSelectEnum) console.error("\u4F60\u5FD8\u8A18\u521D\u59CB\u5316selectEnum");
           _BasicSelect.prototype.onLoad.call(this);
         };
         _proto.start = function start() {
@@ -3576,7 +3610,6 @@ System.register("chunks:///_virtual/BasicSelect.ts", ['./rollupPluginModLoBabelH
           this.setEvent(BasicEnum.ShowWinEnd, this.showWinEnd);
           this.setEvent(BasicEnum.EnabledPlay, this.enabledPlay);
           this.setEvent(BasicEnum.StartAutoPlay, this.onSelect);
-          if (!this.gameSelectEnum) console.error("\u4F60\u5FD8\u8A18\u521D\u59CB\u5316selectEnum");
           _BaseComponent.prototype.onLoad.call(this);
         };
         _proto.start = function start() {
@@ -3626,8 +3659,8 @@ System.register("chunks:///_virtual/BasicSelect.ts", ['./rollupPluginModLoBabelH
   };
 });
 
-System.register("chunks:///_virtual/BasicSFBetInfo.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './BasicEnum.ts', './BasicBetInfo.ts', './BasicSPButton.ts'], function (exports) {
-  var _applyDecoratedDescriptor, _initializerDefineProperty, _inheritsLoose, _assertThisInitialized, cclegacy, _decorator, SpriteFrame, Platform, BasicBetInfo, BasicSPButton;
+System.register("chunks:///_virtual/BasicSFBetInfo.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './BasicEnum.ts', './CommonValue.ts', './BasicBetInfo.ts', './BasicSPButton.ts'], function (exports) {
+  var _applyDecoratedDescriptor, _initializerDefineProperty, _inheritsLoose, _assertThisInitialized, cclegacy, _decorator, SpriteFrame, Platform, CommonValue, BasicBetInfo, BasicSPButton;
   return {
     setters: [function (module) {
       _applyDecoratedDescriptor = module.applyDecoratedDescriptor;
@@ -3640,6 +3673,8 @@ System.register("chunks:///_virtual/BasicSFBetInfo.ts", ['./rollupPluginModLoBab
       SpriteFrame = module.SpriteFrame;
     }, function (module) {
       Platform = module.Platform;
+    }, function (module) {
+      CommonValue = module.default;
     }, function (module) {
       BasicBetInfo = module.default;
     }, function (module) {
@@ -3860,6 +3895,7 @@ System.register("chunks:///_virtual/BasicSFBetInfo.ts", ['./rollupPluginModLoBab
             this.btnAutoPlayIng.normalSprite = this.orientationSprite.mobile_AutoPlayMode;
             this.spriteTotalBg.spriteFrame = this.orientationSprite.mobile_TotalBg;
           }
+          this.btnTurbo.sprite.spriteFrame = CommonValue.isTurbo ? this.orientationSprite[CommonValue.platform + "_Turbo"].press : this.orientationSprite[CommonValue.platform + "_Turbo"]["default"];
         };
         return BasicSFBetInfo;
       }(BasicBetInfo), _descriptor13 = _applyDecoratedDescriptor(_class5.prototype, "orientationSprite", [_dec15], {
@@ -5613,7 +5649,13 @@ System.register("chunks:///_virtual/CommonValue.ts", ['cc', './BasicEnum.ts'], f
     }],
     execute: function () {
       cclegacy._RF.push({}, "a9accOneOtI/oAMZAi7EB0c", "CommonValue", undefined);
-      var CommonValue = exports('default', function CommonValue() {});
+      var CommonValue = exports('default', /*#__PURE__*/function () {
+        function CommonValue() {}
+        CommonValue.actionSpeed = function actionSpeed() {
+          return 1 + 1 * this.turboLevel;
+        };
+        return CommonValue;
+      }());
       CommonValue.turboLevel = 0;
       CommonValue.isTurbo = false;
       CommonValue.isAuto = false;
@@ -10100,8 +10142,8 @@ System.register("chunks:///_virtual/M10Bonus.ts", ['./rollupPluginModLoBabelHelp
   };
 });
 
-System.register("chunks:///_virtual/M10Dice.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './M10SFGamer.ts', './BasicEnum.ts', './CommonValue.ts'], function (exports) {
-  var _applyDecoratedDescriptor, _inheritsLoose, _initializerDefineProperty, _assertThisInitialized, cclegacy, _decorator, Vec3, Sprite, Color, tween, v3, IdentityType, M10SFGamer, Platform, CommonValue;
+System.register("chunks:///_virtual/M10Dice.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './Public.ts', './M10SFGamer.ts', './BasicEnum.ts', './CommonValue.ts'], function (exports) {
+  var _applyDecoratedDescriptor, _inheritsLoose, _initializerDefineProperty, _assertThisInitialized, cclegacy, _decorator, Vec3, Sprite, Color, tween, v3, Plug, IdentityType, M10SFGamer, Platform, CommonValue;
   return {
     setters: [function (module) {
       _applyDecoratedDescriptor = module.applyDecoratedDescriptor;
@@ -10116,6 +10158,8 @@ System.register("chunks:///_virtual/M10Dice.ts", ['./rollupPluginModLoBabelHelpe
       Color = module.Color;
       tween = module.tween;
       v3 = module.v3;
+    }, function (module) {
+      Plug = module.Plug;
     }, function (module) {
       IdentityType = module.IdentityType;
       M10SFGamer = module.default;
@@ -10193,20 +10237,20 @@ System.register("chunks:///_virtual/M10Dice.ts", ['./rollupPluginModLoBabelHelpe
           var _this2 = this;
           this._cb = cb;
           var diceIndex = 0;
-          console.log(dicesNum);
           var _loop = function _loop(index) {
-            console.log(index, _this2.dices[index].color.a);
             if (_this2.dices[index].color.a == 0) return 1; // continue
             var getDiceIndex = diceIndex;
-            tween(_this2.dices[index]).to(.5, {
+            var diceAction = tween(_this2.dices[index]).to(.5, {
               color: new Color(255, 255, 255, 0)
             }).call(function (t) {
               return _this2.showDices(t, getDiceIndex, dicesNum[getDiceIndex], _this2[CommonValue.platform + "_DicePositions"][index], getDiceIndex == dicesNum.length - 1, dicesNum.length == 1);
             }).start();
-            tween(_this2.dices[index].node).by(.5, {
+            var diceAction1 = tween(_this2.dices[index].node).by(.5, {
               position: v3(0, 50)
             }).start();
             diceIndex++;
+            Plug.Model.changeTweenSpeed(diceAction, CommonValue.actionSpeed());
+            Plug.Model.changeTweenSpeed(diceAction1, CommonValue.actionSpeed());
           };
           for (var index = 0; index < this.dices.length; index++) {
             if (_loop(index)) continue;
@@ -10223,7 +10267,7 @@ System.register("chunks:///_virtual/M10Dice.ts", ['./rollupPluginModLoBabelHelpe
           target.color = Color.WHITE;
           var posX = this.identity == IdentityType.Enemy ? -100 : 100;
           if (isOnly) target.spriteFrame = this.orientationSprite[CommonValue.platform + "_DiceDefault"];else target.spriteFrame = dicesNum == 0 ? this.orientationSprite[CommonValue.platform + "_DiceDefault"] : this.spriteFrames.get(dicesNum);
-          tween(target.node).set({
+          var actoin = tween(target.node).set({
             position: v3(posX, 100),
             scale: Vec3.ZERO
           }).delay(.5 + index).to(.5, {
@@ -10235,6 +10279,7 @@ System.register("chunks:///_virtual/M10Dice.ts", ['./rollupPluginModLoBabelHelpe
             if (isLast || isOnly) _this3._cb();
             // if (index == this.dices.length - 1 && this._cb) this._cb()
           }).start();
+          Plug.Model.changeTweenSpeed(actoin, CommonValue.actionSpeed());
         };
         _proto.filterDices = function filterDices(_filterDices, cb) {
           var _this4 = this;
@@ -10251,13 +10296,14 @@ System.register("chunks:///_virtual/M10Dice.ts", ['./rollupPluginModLoBabelHelpe
                 /**如果不是最後一顆骰而且有數字的話就跳過，因為不用做事情 */
               }
               /**如果是過濾掉骰子要掛上動畫 */
+              var diceAction;
               if (_filterDices[diceIndex] == null) {
                 var x = _this4.identity == IdentityType.Enemy ? -100 : 100;
                 var startPos = dice.node.position;
                 var controlPos = v3(startPos.x + x / 2, startPos.y + 70, 0);
                 var endPos = v3(startPos.x + x, startPos.y + 50, 0);
                 var tempVec3 = v3();
-                tween(dice).delay(1).parallel(tween(dice.node).by(.5, {
+                diceAction = tween(dice).delay(1).parallel(tween(dice.node).by(.5, {
                   position: endPos
                 }, {
                   onUpdate: function onUpdate(target, ratio) {
@@ -10267,10 +10313,12 @@ System.register("chunks:///_virtual/M10Dice.ts", ['./rollupPluginModLoBabelHelpe
                 }), tween(dice).to(.5, {
                   color: new Color(255, 255, 255, 0)
                 })).start();
+                Plug.Model.changeTweenSpeed(diceAction, CommonValue.actionSpeed());
               }
               if (isLast) {
                 /**如果是最後一顆，不管怎樣設定倒時結束 */
-                tween(_this4).delay(1.6).call(cb).start();
+                diceAction = tween(_this4).delay(1.6).call(cb).start();
+                Plug.Model.changeTweenSpeed(diceAction, CommonValue.actionSpeed());
                 return {
                   v: void 0
                 };
@@ -10446,7 +10494,7 @@ System.register("chunks:///_virtual/M10Gamer.ts", ['./rollupPluginModLoBabelHelp
           this.spCharacter.node.angle = this.identity == IdentityType.Enemy ? 45 : -45;
           var x = this.identity == IdentityType.Enemy ? -100 : 100;
           var startPos = this.spCharacter.node.position;
-          var controlPos = v3(startPos.x + x / 2, +30, 0);
+          var controlPos = v3(startPos.x + x / 2, 30, 0);
           var endPos = v3(startPos.x + x, -30, 0);
           var tempVec3 = v3();
           tween(this.spCharacter.node).by(1, {
@@ -10487,8 +10535,8 @@ System.register("chunks:///_virtual/M10Gamer.ts", ['./rollupPluginModLoBabelHelp
   };
 });
 
-System.register("chunks:///_virtual/M10PanelAutoPlay.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './M10Enum.ts', './BasicAutoPlay.ts', './BasicPlaySelect.ts'], function (exports) {
-  var _inheritsLoose, cclegacy, _decorator, PanelIndex, BasicAutoPlay, Select;
+System.register("chunks:///_virtual/M10PanelAutoPlay.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './M10Enum.ts', './BasicPlayAutoPlay.ts', './BasicPlaySelect.ts'], function (exports) {
+  var _inheritsLoose, cclegacy, _decorator, PanelIndex, BasicPlayAutoPlay, Select;
   return {
     setters: [function (module) {
       _inheritsLoose = module.inheritsLoose;
@@ -10498,7 +10546,7 @@ System.register("chunks:///_virtual/M10PanelAutoPlay.ts", ['./rollupPluginModLoB
     }, function (module) {
       PanelIndex = module.PanelIndex;
     }, function (module) {
-      BasicAutoPlay = module.default;
+      BasicPlayAutoPlay = module.default;
     }, function (module) {
       Select = module.Select;
     }],
@@ -10507,24 +10555,24 @@ System.register("chunks:///_virtual/M10PanelAutoPlay.ts", ['./rollupPluginModLoB
       cclegacy._RF.push({}, "4a1bfMrTxtDQaYazWEAR5Qu", "M10PanelAutoPlay", undefined);
       var ccclass = _decorator.ccclass,
         property = _decorator.property;
-      var M10PanelAutoPlay = exports('default', (_dec = ccclass('M10PanelAutoPlay'), _dec(_class = /*#__PURE__*/function (_BasicAutoPlay) {
-        _inheritsLoose(M10PanelAutoPlay, _BasicAutoPlay);
+      var M10PanelAutoPlay = exports('default', (_dec = ccclass('M10PanelAutoPlay'), _dec(_class = /*#__PURE__*/function (_BasicPlayAutoPlay) {
+        _inheritsLoose(M10PanelAutoPlay, _BasicPlayAutoPlay);
         function M10PanelAutoPlay() {
           var _this;
           for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
             args[_key] = arguments[_key];
           }
-          _this = _BasicAutoPlay.call.apply(_BasicAutoPlay, [this].concat(args)) || this;
+          _this = _BasicPlayAutoPlay.call.apply(_BasicPlayAutoPlay, [this].concat(args)) || this;
           _this.selectBet = Select.Play;
           return _this;
         }
         var _proto = M10PanelAutoPlay.prototype;
         _proto.onLoad = function onLoad() {
           this.zIndex = PanelIndex.AutoPlay;
-          _BasicAutoPlay.prototype.onLoad.call(this);
+          _BasicPlayAutoPlay.prototype.onLoad.call(this);
         };
         return M10PanelAutoPlay;
-      }(BasicAutoPlay)) || _class));
+      }(BasicPlayAutoPlay)) || _class));
       cclegacy._RF.pop();
     }
   };
@@ -10595,8 +10643,8 @@ System.register("chunks:///_virtual/M10PanelBetInfo.ts", ['./rollupPluginModLoBa
   };
 });
 
-System.register("chunks:///_virtual/M10PanelBetSelect.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './EventMng.ts', './Public.ts', './M10Enum.ts', './M10SFSelect.ts', './CommonValue.ts', './BasicPlaySelect.ts'], function (exports) {
-  var _applyDecoratedDescriptor, _inheritsLoose, _createForOfIteratorHelperLoose, cclegacy, _decorator, EventMng, NotificationType, setFunctionName, Plug, PanelIndex, M10Select, GameEnum, M10SFSelect, CommonValue, Select, BasicPlaySendDate;
+System.register("chunks:///_virtual/M10PanelBetSelect.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './EventMng.ts', './Public.ts', './M10Enum.ts', './M10SFSelect.ts', './BasicEnum.ts', './CommonValue.ts', './BasicPlaySelect.ts'], function (exports) {
+  var _applyDecoratedDescriptor, _inheritsLoose, _createForOfIteratorHelperLoose, cclegacy, _decorator, EventMng, NotificationType, setFunctionName, Plug, PanelIndex, M10Select, GameEnum, M10SFSelect, BasicEnum, CommonValue, Select, BasicPlaySendDate;
   return {
     setters: [function (module) {
       _applyDecoratedDescriptor = module.applyDecoratedDescriptor;
@@ -10617,6 +10665,8 @@ System.register("chunks:///_virtual/M10PanelBetSelect.ts", ['./rollupPluginModLo
       GameEnum = module.GameEnum;
     }, function (module) {
       M10SFSelect = module.default;
+    }, function (module) {
+      BasicEnum = module.BasicEnum;
     }, function (module) {
       CommonValue = module.default;
     }, function (module) {
@@ -10652,13 +10702,6 @@ System.register("chunks:///_virtual/M10PanelBetSelect.ts", ['./rollupPluginModLo
           this.resetSelectBtnSet(false);
           EventMng.getInstance.setEvent(NotificationType.Game, GameEnum.SelectBtnsActive, this.resetSelectBtnSet, this);
           EventMng.getInstance.setEvent(NotificationType.Game, GameEnum.EnemySelect, this.onSelectItem, this);
-          // this.btnRed.node.off(Input.EventType.TOUCH_MOVE)
-          // this.btnBlack.node.off(Input.EventType.TOUCH_MOVE)
-          // this.btnOdd.node.off(Input.EventType.TOUCH_MOVE)
-          // this.btnEven.node.off(Input.EventType.TOUCH_MOVE)
-          // this.btnBig.node.off(Input.EventType.TOUCH_MOVE)
-          // this.btnSmall.node.off(Input.EventType.TOUCH_MOVE)
-
           _M10SFSelect.prototype.onLoad.call(this);
         };
         _proto.start = function start() {
@@ -10677,8 +10720,8 @@ System.register("chunks:///_virtual/M10PanelBetSelect.ts", ['./rollupPluginModLo
           this.rememberDate = new SendCheckOrder();
         };
         _proto.loopGame = function loopGame() {
-          // this.resetSelectBtnSet(true)
-          // super.loopGame()
+          CommonValue.isAuto && EventMng.getInstance.emit(NotificationType.Game, GameEnum.SendAPI, this.rememberDate, GameEnum.CheckOrder);
+          this.eventEmit(BasicEnum.UpdateAutoRound);
         }
         /**不包含Play按鈕 */;
         _proto.resetSelectBtnSet = function resetSelectBtnSet(bool, isInteractable) {
@@ -10704,7 +10747,7 @@ System.register("chunks:///_virtual/M10PanelBetSelect.ts", ['./rollupPluginModLo
           if (!Plug.Model.checkHasEnum(M10Select, customEventData) && !Plug.Model.checkHasEnum(Select, customEventData)) throw new Error("node\u7269\u4EF6\u547D\u540D\u6709\u554F\u984C\uFF0CEvnetData\uFF1A" + customEventData);
           this.resetSelectBtnSet(true, false);
           var btn = this.getCompo(customEventData);
-          // btn.interactable = true
+          btn.interactable = false;
           this.changeBtnStatus(btn, true);
           //TODO 傳遞給後端
           var selectData = new SendSelect();
@@ -10934,8 +10977,8 @@ System.register("chunks:///_virtual/M10PanelChip.ts", ['./rollupPluginModLoBabel
   };
 });
 
-System.register("chunks:///_virtual/M10PanelGameShow.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './EventMng.ts', './M10Enum.ts', './M10SFGamer.ts', './BasicGameShow.ts', './M10Gamer.ts'], function (exports) {
-  var _applyDecoratedDescriptor, _initializerDefineProperty, _inheritsLoose, _assertThisInitialized, _asyncToGenerator, _regeneratorRuntime, cclegacy, _decorator, Sprite, SpriteFrame, Label, tween, v3, Vec3, EventMng, NotificationType, GameEnum, PanelIndex, IdentityType, BasicGameShow, M10Gamer;
+System.register("chunks:///_virtual/M10PanelGameShow.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './EventMng.ts', './Public.ts', './M10Enum.ts', './M10SFGamer.ts', './CommonValue.ts', './BasicGameShow.ts', './M10Gamer.ts'], function (exports) {
+  var _applyDecoratedDescriptor, _initializerDefineProperty, _inheritsLoose, _assertThisInitialized, _asyncToGenerator, _regeneratorRuntime, cclegacy, _decorator, Sprite, SpriteFrame, Label, tween, v3, Vec3, EventMng, NotificationType, Plug, GameEnum, PanelIndex, IdentityType, CommonValue, BasicGameShow, M10Gamer;
   return {
     setters: [function (module) {
       _applyDecoratedDescriptor = module.applyDecoratedDescriptor;
@@ -10957,10 +11000,14 @@ System.register("chunks:///_virtual/M10PanelGameShow.ts", ['./rollupPluginModLoB
       EventMng = module.default;
       NotificationType = module.NotificationType;
     }, function (module) {
+      Plug = module.Plug;
+    }, function (module) {
       GameEnum = module.GameEnum;
       PanelIndex = module.PanelIndex;
     }, function (module) {
       IdentityType = module.IdentityType;
+    }, function (module) {
+      CommonValue = module.default;
     }, function (module) {
       BasicGameShow = module.default;
     }, function (module) {
@@ -11100,7 +11147,7 @@ System.register("chunks:///_virtual/M10PanelGameShow.ts", ['./rollupPluginModLoB
             }).delay(.3);
           }
           _action.call( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-            var awaitE, awaitP;
+            var awaitE, awaitP, showDice;
             return _regeneratorRuntime().wrap(function _callee2$(_context2) {
               while (1) switch (_context2.prev = _context2.next) {
                 case 0:
@@ -11116,20 +11163,23 @@ System.register("chunks:///_virtual/M10PanelGameShow.ts", ['./rollupPluginModLoB
                   return Promise.all([awaitE, awaitP]);
                 case 6:
                   EventMng.getInstance.emit(NotificationType.Game, GameEnum.SelectBtnsActive, true, false);
-                  tween(_this2).delay(.5).call(function () {
-                    if (result.order == IdentityType.Player_Num) {
-                      EventMng.getInstance.emit(NotificationType.Game, GameEnum.SelectBtnsActive, true, true);
-                    } else {
+                  showDice = tween(_this2).delay(.5).call(function () {
+                    if (result.order == IdentityType.Enemy_Num || CommonValue.isAuto) {
                       EventMng.getInstance.emit(NotificationType.Game, GameEnum.EnemySelect, null, result.roundSelect);
+                    } else {
+                      EventMng.getInstance.emit(NotificationType.Game, GameEnum.SelectBtnsActive, true, true);
                     }
                   }).start();
-                case 8:
+                  Plug.Model.changeTweenSpeed(showDice, CommonValue.actionSpeed());
+                case 9:
                 case "end":
                   return _context2.stop();
               }
             }, _callee2);
           }))).start();
+          // Plug.Model.changeTweenSpeed(_action, CommonValue.actionSpeed())
         };
+
         _proto.selectResult = /*#__PURE__*/function () {
           var _selectResult = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(result) {
             var _this3 = this;
@@ -11927,9 +11977,9 @@ System.register("chunks:///_virtual/M10SFSelect.ts", ['./rollupPluginModLoBabelH
   };
 });
 
-System.register("chunks:///_virtual/main", ['./AutoFollow.ts', './BaseComponent.ts', './DelayTime.ts', './EasyCode.ts', './EditSpine.mjs_cjs=&original=.js', './GoogleSheet.ts', './SheetData.ts', './CocosImage.ts', './CreateFileSprite.ts', './index2.ts', './sign.ts', './sign3.ts', './produce.ts', './sign2.ts', './import.ts', './buffer_utils.ts', './check_key_type.ts', './crypto_key.ts', './epoch.ts', './invalid_key_input.ts', './is_disjoint.ts', './is_object.ts', './secs.ts', './validate_crit.ts', './asn1.ts', './base64url.ts', './check_key_length.ts', './get_sign_verify_key.ts', './is_key_like.ts', './sign4.ts', './subtle_dsa.ts', './webcrypto.ts', './errors.ts', './browser_client.ts', './base_client.ts', './index.ts', './mod2.ts', './connack.ts', './connect.ts', './disconnect.ts', './length.ts', './mod.ts', './pingreq.ts', './pingres.ts', './puback.ts', './pubcomp.ts', './publish.ts', './pubrec.ts', './pubrel.ts', './suback.ts', './subscribe.ts', './unsuback.ts', './unsubscribe.ts', './utf8.ts', './EventMng.ts', './LanguageManager.ts', './MyEditBox.ts', './MyMath.ts', './BaseSingleton.ts', './BaseSingletonComponent.ts', './IBaseSingleton.ts', './SingletonManger.ts', './StatePatten.ts', './Public.ts', './Request.ts', './RequestData.ts', './ResponseData.ts', './SetBtnEventForKeepTouching.ts', './LookTex.ts', './aes.js', './blowfish.js', './cipher-core.js', './core.js', './enc-base64.js', './enc-base64url.js', './enc-utf16.js', './evpkdf.js', './format-hex.js', './hmac.js', './index.js', './md5.js', './mode-cfb.js', './mode-ctr-gladman.js', './mode-ctr.js', './mode-ecb.js', './mode-ofb.js', './pad-ansix923.js', './pad-iso10126.js', './pad-iso97971.js', './pad-nopadding.js', './pad-zeropadding.js', './pbkdf2.js', './rabbit-legacy.js', './rabbit.js', './rc4.js', './ripemd160.js', './sha1.js', './sha224.js', './sha256.js', './sha3.js', './sha384.js', './sha512.js', './tripledes.js', './x64-core.js', './PageViewOnlyShowItemsInMaskRange.ts', './ScrollViewEvent.ts', './ScrollViewOnlyShowItemsInMaskRange.ts', './GameContorl.ts', './M10Enum.ts', './M10SFBG.ts', './M10SFBonus.ts', './M10SFGamer.ts', './M10SFSelect.ts', './RequestContorl.ts', './RequestData2.ts', './AutoView.ts', './BasicEnum.ts', './CommonValue.ts', './CustomEvent.ts', './LabelButton.ts', './BasicSFBetInfo.ts', './BasicSFPlaySelect.ts', './BasicSFRandomSelect.ts', './BasicSPButton.ts', './BasicAutoPlay.ts', './BasicRandomAutoPlay.ts', './BasicBetInfo.ts', './BasicChip.ts', './BasicGameShow.ts', './BasicVersion.ts', './BasicPlaySelect.ts', './BasicRandomSelect.ts', './BasicSelect.ts', './ScreenAdapter.ts', './SpriteButton.ts', './M10PanelAutoPlay.ts', './M10PanelBG.ts', './M10PanelBetInfo.ts', './M10PanelBetSelect.ts', './M10Bonus.ts', './M10PanelBonus.ts', './M10PanelChip.ts', './M10Dice.ts', './M10Gamer.ts', './M10PanelGameShow.ts', './M10PanelVersion.ts'], function () {
+System.register("chunks:///_virtual/main", ['./AutoFollow.ts', './BaseComponent.ts', './DelayTime.ts', './EasyCode.ts', './EditSpine.mjs_cjs=&original=.js', './GoogleSheet.ts', './SheetData.ts', './CocosImage.ts', './CreateFileSprite.ts', './index2.ts', './sign.ts', './sign3.ts', './produce.ts', './sign2.ts', './import.ts', './buffer_utils.ts', './check_key_type.ts', './crypto_key.ts', './epoch.ts', './invalid_key_input.ts', './is_disjoint.ts', './is_object.ts', './secs.ts', './validate_crit.ts', './asn1.ts', './base64url.ts', './check_key_length.ts', './get_sign_verify_key.ts', './is_key_like.ts', './sign4.ts', './subtle_dsa.ts', './webcrypto.ts', './errors.ts', './browser_client.ts', './base_client.ts', './index.ts', './mod2.ts', './connack.ts', './connect.ts', './disconnect.ts', './length.ts', './mod.ts', './pingreq.ts', './pingres.ts', './puback.ts', './pubcomp.ts', './publish.ts', './pubrec.ts', './pubrel.ts', './suback.ts', './subscribe.ts', './unsuback.ts', './unsubscribe.ts', './utf8.ts', './EventMng.ts', './LanguageManager.ts', './MyEditBox.ts', './MyMath.ts', './BaseSingleton.ts', './BaseSingletonComponent.ts', './IBaseSingleton.ts', './SingletonManger.ts', './StatePatten.ts', './Public.ts', './Request.ts', './RequestData.ts', './ResponseData.ts', './SetBtnEventForKeepTouching.ts', './LookTex.ts', './aes.js', './blowfish.js', './cipher-core.js', './core.js', './enc-base64.js', './enc-base64url.js', './enc-utf16.js', './evpkdf.js', './format-hex.js', './hmac.js', './index.js', './md5.js', './mode-cfb.js', './mode-ctr-gladman.js', './mode-ctr.js', './mode-ecb.js', './mode-ofb.js', './pad-ansix923.js', './pad-iso10126.js', './pad-iso97971.js', './pad-nopadding.js', './pad-zeropadding.js', './pbkdf2.js', './rabbit-legacy.js', './rabbit.js', './rc4.js', './ripemd160.js', './sha1.js', './sha224.js', './sha256.js', './sha3.js', './sha384.js', './sha512.js', './tripledes.js', './x64-core.js', './PageViewOnlyShowItemsInMaskRange.ts', './ScrollViewEvent.ts', './ScrollViewOnlyShowItemsInMaskRange.ts', './GameContorl.ts', './M10Enum.ts', './M10SFBG.ts', './M10SFBonus.ts', './M10SFGamer.ts', './M10SFSelect.ts', './RequestContorl.ts', './RequestData2.ts', './AutoView.ts', './BasicEnum.ts', './CommonValue.ts', './CustomEvent.ts', './LabelButton.ts', './BasicSFBetInfo.ts', './BasicSFPlaySelect.ts', './BasicSFRandomSelect.ts', './BasicSPButton.ts', './BasicAutoPlay.ts', './BasicPlayAutoPlay.ts', './BasicRandomAutoPlay.ts', './BasicBetInfo.ts', './BasicChip.ts', './BasicGameShow.ts', './BasicVersion.ts', './BasicPlaySelect.ts', './BasicRandomSelect.ts', './BasicSelect.ts', './ScreenAdapter.ts', './SpriteButton.ts', './M10PanelAutoPlay.ts', './M10PanelBG.ts', './M10PanelBetInfo.ts', './M10PanelBetSelect.ts', './M10Bonus.ts', './M10PanelBonus.ts', './M10PanelChip.ts', './M10Dice.ts', './M10Gamer.ts', './M10PanelGameShow.ts', './M10PanelVersion.ts'], function () {
   return {
-    setters: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+    setters: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
     execute: function () {}
   };
 });
@@ -14968,8 +15018,8 @@ System.register("chunks:///_virtual/Request.ts", ['./rollupPluginModLoBabelHelpe
   };
 });
 
-System.register("chunks:///_virtual/RequestContorl.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './BaseComponent.ts', './EventMng.ts', './M10Enum.ts', './M10SFGamer.ts', './BasicEnum.ts', './RequestData2.ts'], function (exports) {
-  var _inheritsLoose, cclegacy, _decorator, random, BaseComponent, EventMng, NotificationType, GameEnum, M10Select, IdentityType, BasicEnum, SelectResult, OrderResult, M10Result;
+System.register("chunks:///_virtual/RequestContorl.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc', './BaseComponent.ts', './EventMng.ts', './M10Enum.ts', './M10SFGamer.ts', './BasicEnum.ts', './CommonValue.ts', './RequestData2.ts'], function (exports) {
+  var _inheritsLoose, cclegacy, _decorator, random, BaseComponent, EventMng, NotificationType, GameEnum, M10Select, IdentityType, BasicEnum, CommonValue, SelectResult, OrderResult, M10Result;
   return {
     setters: [function (module) {
       _inheritsLoose = module.inheritsLoose;
@@ -14989,6 +15039,8 @@ System.register("chunks:///_virtual/RequestContorl.ts", ['./rollupPluginModLoBab
       IdentityType = module.IdentityType;
     }, function (module) {
       BasicEnum = module.BasicEnum;
+    }, function (module) {
+      CommonValue = module.default;
     }, function (module) {
       SelectResult = module.SelectResult;
       OrderResult = module.OrderResult;
@@ -15018,7 +15070,7 @@ System.register("chunks:///_virtual/RequestContorl.ts", ['./rollupPluginModLoBab
           EventMng.getInstance.setEvent(NotificationType.Game, GameEnum.SendAPI, this.sendAPI, this);
         };
         _proto.sendAPI = function sendAPI(sendDate, gameEnum) {
-          console.log("傳傳送封包", sendDate);
+          console.error("傳傳送封包", sendDate, gameEnum);
           if (gameEnum) {
             switch (gameEnum) {
               case GameEnum.CheckOrder:
@@ -15030,7 +15082,7 @@ System.register("chunks:///_virtual/RequestContorl.ts", ['./rollupPluginModLoBab
                 } else orderR.order = this.order = this.order == IdentityType.Enemy_Num ? IdentityType.Player_Num : IdentityType.Enemy_Num;
                 orderR.playerDice = this.playerDice = this.initDice(this.playerDice.length);
                 orderR.enemyDice = this.enemyDice = this.initDice(this.enemyDice.length);
-                if (orderR.order == IdentityType.Enemy_Num) {
+                if (orderR.order == IdentityType.Enemy_Num || CommonValue.isAuto) {
                   var selectStr = Object.keys(M10Select);
                   orderR.roundSelect = selectStr[Math.floor(random() * selectStr.length)];
                 }
@@ -15622,6 +15674,7 @@ System.register("chunks:///_virtual/ScreenAdapter.ts", ['./rollupPluginModLoBabe
             if (CommonValue.platform != Platform.Mobile) {
               CommonValue.platform = Platform.Mobile;
             }
+            // this.canvas.cameraComponent.orthoHeight = 1080
             EventMng.getInstance.emit(NotificationType.Basic, BasicEnum.OrientationChange, false);
           }
           GameContorl.instance.setPanelIndex();
@@ -17881,19 +17934,22 @@ System.register("chunks:///_virtual/SingletonManger.ts", ['./rollupPluginModLoBa
 });
 
 System.register("chunks:///_virtual/SpriteButton.ts", ['./rollupPluginModLoBabelHelpers.js', 'cc'], function (exports) {
-  var _applyDecoratedDescriptor, _inheritsLoose, _initializerDefineProperty, _assertThisInitialized, cclegacy, _decorator, SpriteFrame, Sprite, Button;
+  var _applyDecoratedDescriptor, _inheritsLoose, _initializerDefineProperty, _assertThisInitialized, _asyncToGenerator, _regeneratorRuntime, cclegacy, _decorator, SpriteFrame, Sprite, Button, Node;
   return {
     setters: [function (module) {
       _applyDecoratedDescriptor = module.applyDecoratedDescriptor;
       _inheritsLoose = module.inheritsLoose;
       _initializerDefineProperty = module.initializerDefineProperty;
       _assertThisInitialized = module.assertThisInitialized;
+      _asyncToGenerator = module.asyncToGenerator;
+      _regeneratorRuntime = module.regeneratorRuntime;
     }, function (module) {
       cclegacy = module.cclegacy;
       _decorator = module._decorator;
       SpriteFrame = module.SpriteFrame;
       Sprite = module.Sprite;
       Button = module.Button;
+      Node = module.Node;
     }],
     execute: function () {
       var _dec, _dec2, _dec3, _class, _class2, _descriptor, _descriptor2;
@@ -17922,6 +17978,7 @@ System.register("chunks:///_virtual/SpriteButton.ts", ['./rollupPluginModLoBabel
           //這邊找時間寫成get set 方式轉換看會不會影響到toech end流程
           _this.isSelect = false;
           _this.sprite = void 0;
+          _this.isCanMoveEvent = true;
           return _this;
         }
         var _proto = SpriteButton.prototype;
@@ -17950,6 +18007,44 @@ System.register("chunks:///_virtual/SpriteButton.ts", ['./rollupPluginModLoBabel
             this.sprite.spriteFrame = this.isSelect ? this.defaultSelectSprite : changeSprite;
           }
         };
+        _proto._onTouchMove = function _onTouchMove(event) {
+          if (!this.isCanMoveEvent) {
+            this.activeTouchMove(false);
+            return;
+          }
+          _Button.prototype._onTouchMove.call(this, event);
+        };
+        _proto._onTouchCancel = function _onTouchCancel(event) {
+          if (!this.isCanMoveEvent) {
+            this.activeTouchMove(false);
+            return;
+          }
+          _Button.prototype._onTouchCancel.call(this, event);
+        };
+        _proto.activeTouchMove = /*#__PURE__*/function () {
+          var _activeTouchMove = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(isbool) {
+            return _regeneratorRuntime().wrap(function _callee$(_context) {
+              while (1) switch (_context.prev = _context.next) {
+                case 0:
+                  this.isCanMoveEvent = isbool;
+                  if (isbool) {
+                    this.node.on(Node.EventType.TOUCH_MOVE, this._onTouchMove, this);
+                    this.node.on(Node.EventType.TOUCH_CANCEL, this._onTouchCancel, this);
+                  } else {
+                    this.node.off(Node.EventType.TOUCH_MOVE, this._onTouchMove, this);
+                    this.node.off(Node.EventType.TOUCH_CANCEL, this._onTouchCancel, this);
+                  }
+                case 2:
+                case "end":
+                  return _context.stop();
+              }
+            }, _callee, this);
+          }));
+          function activeTouchMove(_x) {
+            return _activeTouchMove.apply(this, arguments);
+          }
+          return activeTouchMove;
+        }();
         return SpriteButton;
       }(Button), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, "defaultNormalSprite", [_dec2], {
         configurable: true,

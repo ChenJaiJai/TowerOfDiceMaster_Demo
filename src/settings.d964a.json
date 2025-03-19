@@ -48,8 +48,8 @@
         ],
         "bundleVers": {
             "internal": "d8f45",
-            "main": "f9e93",
-            "resources": "ddd09"
+            "main": "ebcd2",
+            "resources": "80757"
         },
         "preloadAssets": [],
         "projectBundles": [
@@ -73,8 +73,8 @@
     "screen": {
         "exactFitScreen": true,
         "designResolution": {
-            "width": 1920,
-            "height": 1080,
+            "width": 1080,
+            "height": 1920,
             "policy": 2
         },
         "orientation": "auto"
